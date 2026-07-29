@@ -28,7 +28,7 @@ const Holdings = () => {
       if (err.response?.status === 401) {
         alert("Session Expired. Please login again.");
         localStorage.removeItem("token");
-        window.location.href = "http://localhost:3000/login";
+        window.location.href = "https://zerodha-frontend.onrender.com/login";";
       }
     }
   };
