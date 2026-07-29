@@ -1,92 +1,142 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import "./Singup.css";
 
 const Singup = () => {
     const navigate = useNavigate();
-    const[inputValue, setInputValue] = useState({
+
+    const [inputValue, setInputValue] = useState({
+        fullName: "",
         email: "",
         password: "",
-        username: "",
     });
-    const { email, password, username } = inputValue;
-    const handleoneChange = (e) => {
-        const { name, value } = e.target;
+
+    const { fullName, email, password } = inputValue;
+
+    const handleChange = (e) => {
         setInputValue({
             ...inputValue,
-            [name]: value,
+            [e.target.name]: e.target.value,
         });
     };
-
-    const handleError = (err) => 
-        toast.error(err, {
-            position: "bottom-left",
-        });
-        const handleSuccess = (msg) => 
-            toast.success(msg, {
-                positin: "bottom-right",
-            });
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        if (!fullName || !email || !password) {
+            toast.error("Please fill all fields");
+            return;
+        }
+
         try {
             const { data } = await axios.post(
-                "http://localhost:3002/signup",
-                {
-                    ...inputValue,
-                },
-                { withCredentials: true }
+                "http://localhost:3002/api/auth/signup",
+                inputValue
             );
-            const { success, message } = data;
-            if (success) {
-                handleSuccess(message);
+
+            if (data.success) {
+                toast.success(data.message);
+
+                setInputValue({
+                    fullName: "",
+                    email: "",
+                    password: "",
+                });
+
                 setTimeout(() => {
                     navigate("/login");
-                }, 1000);
+                }, 1500);
             } else {
-                handleError(message);
+                toast.error(data.message);
             }
         } catch (error) {
-            console.log(error);
+            toast.error(
+                error.response?.data?.message || "Something went wrong"
+            );
         }
-        setInputValue({
-            ...inputValue,
-            email: "",
-            password: "",
-            username: "",
-        });
     };
 
     return (
-        <div className="form_container">
-            <h2>Signup Account</h2>
-            <form onSubmit={handleSubmit}>
-                <input
-                    type="text"
-                    name="username"
-                    placeholder="Enter username"
-                    value={username}
-                    onChange={handleoneChange}
-                />
-                <input
-                    type="email"
-                    name="email"
-                    placeholder="Enter email"
-                    value={email}
-                    onChange={handleoneChange}
-                />
-                <input
-                    type="password"
-                    name="password"
-                    placeholder="Enter password"
-                    value={password}
-                    onChange={handleoneChange}
-                />
-                <button type="submit">Signup</button>
-            </form>
-        </div>
-    )
-}
+        <>
+            <ToastContainer position="top-right" autoClose={2000} />
+
+            <div className="signup-page">
+
+                {/* Left Side */}
+                <div className="signup-left">
+
+                    <img
+                        src="https://zerodha.com/static/images/account_open.svg"
+                        alt="Signup"
+                    />
+
+                    <h1>Open a free demat and trading account</h1>
+
+                    <p>
+                        Start investing in stocks, mutual funds and more with a modern
+                        trading experience.
+                    </p>
+
+                </div>
+
+                {/* Right Side */}
+
+                <div className="signup-right">
+
+                    <div className="signup-card">
+
+                        <h2>Create Account</h2>
+
+                        <p>
+                            Join Zerodha in less than a minute.
+                        </p>
+
+                        <form onSubmit={handleSubmit}>
+
+                            <input
+                                type="text"
+                                name="fullName"
+                                placeholder="Full Name"
+                                value={fullName}
+                                onChange={handleChange}
+                            />
+
+                            <input
+                                type="email"
+                                name="email"
+                                placeholder="Email Address"
+                                value={email}
+                                onChange={handleChange}
+                            />
+
+                            <input
+                                type="password"
+                                name="password"
+                                placeholder="Password"
+                                value={password}
+                                onChange={handleChange}
+                            />
+
+                            <button type="submit">
+                                Create Account
+                            </button>
+
+                        </form>
+
+                        <p className="login-text">
+                            Login page coming soon...
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </>
+    );
+};
 
 export default Singup;
