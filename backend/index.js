@@ -1,4 +1,5 @@
 require("dotenv").config();
+const authRoutes = require("./routes/authRoutes");
 
 const express = require("express");
 const mongoose = require("mongoose");
@@ -19,6 +20,7 @@ const app = express();
 
 app.use(cors());
 app.use(bodyParser.json());
+app.use("/api/auth", authRoutes);
 
 // app.get('/addHoldings', async(request,res)=> {
 //     let tempHoldings = [
@@ -210,16 +212,29 @@ app.post('/newOrder', async(req,res)=> {
         mode: req.body.mode,
     });
 
-    newOrder.save();
+    await newOrder.save();
 
     res.send("Order saved!");
 });
 
+if (!uri) {
+    console.error('MONGO_URL environment variable is not set.');
+    process.exit(1);
+}
 
-app.listen(PORT, ()=> {
-    console.log("App started!");
-    mongoose.connect(uri);
-    console.log("MongoDB connected");
-});
+const startServer = async () => {
+    try {
+        await mongoose.connect(uri);
+        console.log('MongoDB connected');
+        app.listen(PORT, () => {
+            console.log(`App started on http://localhost:${PORT}`);
+        });
+    } catch (error) {
+        console.error('MongoDB connection error:', error);
+        process.exit(1);
+    }
+};
+
+startServer();
 
 
