@@ -42,7 +42,7 @@ const Login = () => {
 
         setTimeout(() => {
           // Dashboard Open
-          window.location.href = "http://localhost:3001";
+          window.location.href = "https://zerodha-dashboard-1mos.onrender.com";";
         }, 1500);
       } else {
         toast.error(data.message);
