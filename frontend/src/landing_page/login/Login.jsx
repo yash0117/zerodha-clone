@@ -30,7 +30,7 @@ const Login = () => {
 
     try {
       const { data } = await axios.post(
-        "http://localhost:3002/api/auth/login",
+        "https://zerodha-backend-j83m.onrender.com/api/auth/login",
         inputValue
       );
 

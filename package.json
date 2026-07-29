@@ -5,6 +5,7 @@
     "backend": "cd backend && npm start",
     "frontend": "cd frontend && npm start",
     "dashboard": "cd dashboard && npm start",
+    "dev": "npm run start",
     "start": "concurrently \"npm run backend\" \"npm run frontend\" \"npm run dashboard\""
   },
   "devDependencies": {
